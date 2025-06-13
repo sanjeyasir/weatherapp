@@ -10,7 +10,7 @@ const MainCard = ({ location, currentdate, type, temperature, humidity, wind, fi
         <Grid container spacing={2} alignItems="flex-start">
           <Grid item xs>
             <div className="icon-container">
-              <img src={process.env.PUBLIC_URL + `/images/animated/${filename}`} width="100%"></img>
+              <img alt="Weather image" src={process.env.PUBLIC_URL + `/images/animated/${filename}`} width="100%"></img>
             </div>
             <Typography variant="h6">{location}</Typography>
             <Typography color="text.secondary">{type}</Typography>

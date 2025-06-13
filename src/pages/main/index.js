@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-import WeatherCard from '../../components/Weathercard';
 import MainCard from '../../components/Maincard';
 
 
