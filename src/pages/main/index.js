@@ -423,8 +423,8 @@ function MainIndex() {
       }}
     >
 
+      {trendData && <WeatherAreaChart data={trendData} />}
       
-      <WeatherAreaChart data={trendData} />
     </Box>
 
     </>
