@@ -1,8 +1,8 @@
 // src/App.js
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Main from './pages/main/index';
 import './App.css';
+
 
 function App() {
   return (

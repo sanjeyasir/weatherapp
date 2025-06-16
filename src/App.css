@@ -2,7 +2,7 @@
 body {
   margin: 10;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f3f6f4;
+  background-color: #F5F5F5;
 }
 
 .icon-container {
@@ -13,4 +13,10 @@ body {
 .animated-icon {
   width: 100%;
   height: 100%;
+}
+
+@media (min-width: 768px) {
+  .main-card-wrapper {
+    width: 50% !important; /* side-by-side on larger screens */
+  }
 }
