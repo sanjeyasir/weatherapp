@@ -196,6 +196,7 @@ function MainIndex() {
 
   async function fetchWeatherByCityName(lat,long, apiKey) {
   try {
+    if(!lat || !long) throw new Error(`Error: No valid data`);
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${apiKey}&units=metric`
     );
@@ -208,6 +209,7 @@ function MainIndex() {
 
   async function fetchForecastByCityName(lat,long, apiKey) {
     try {
+      if(!lat || !long) throw new Error(`Error: No valid data`);
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=${apiKey}&units=metric`
       );
@@ -270,7 +272,7 @@ function MainIndex() {
     }
 
   fetchData();
-  }, [selectedLocation]);
+  }, [selectedLat,selectedLng]);
 
 
 
@@ -325,7 +327,7 @@ function MainIndex() {
       />
     )}
   />
-</Box>
+   </Box>
 
 
     <Box
@@ -411,7 +413,7 @@ function MainIndex() {
 
   
 
-     <Box
+    {trendData.length!=0 &&<Box
       sx={{
         marginTop: "10px",
         display: 'flex',
@@ -423,9 +425,9 @@ function MainIndex() {
       }}
     >
 
-      {trendData && <WeatherAreaChart data={trendData} />}
+       <WeatherAreaChart data={trendData} />
       
-    </Box>
+    </Box>}
 
     </>
     

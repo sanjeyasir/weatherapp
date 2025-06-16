@@ -50,6 +50,7 @@ const WeatherAreaChart = ({ data }) => {
   const activeMetric = metricMap[selectedTab];
 
   return (
+    <>
     <Card
       sx={{
         mt: 3,
@@ -110,6 +111,8 @@ const WeatherAreaChart = ({ data }) => {
         </Box>
       </CardContent>
     </Card>
+    </>
+   
   );
 };
 
