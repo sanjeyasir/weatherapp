@@ -121,21 +121,33 @@ function MainIndex() {
     });
   }
  
-  //helper function to get icons
+ // Enhanced helper function to get appropriate weather icon filename
   const getWeatherIconFilename = (weatherType) => {
-    switch (weatherType.toLowerCase()) {
-      case "clouds":
-        return "cloudy-3-day.svg";
-      case "rain":
-        return "rainy-3-day.svg";
-      case "clear":
-        return "sunny-3-day.svg";
-      case "snow":
-        return "snowy-3-day.svg";
-      default:
-        return "cloudy-3-day.svg";
+    const type = weatherType.toLowerCase();
+
+    if (["clouds", "overcast", "few clouds", "scattered clouds", "broken clouds"].includes(type)) {
+      return "cloudy-3-day.svg";
     }
+    if (["rain", "drizzle", "shower rain", "light rain", "moderate rain", "heavy intensity rain"].includes(type)) {
+      return "rainy-3-day.svg";
+    }
+    if (["clear", "sunny"].includes(type)) {
+      return "sunny-3-day.svg";
+    }
+    if (["snow", "light snow", "heavy snow"].includes(type)) {
+      return "snowy-3-day.svg";
+    }
+    if (["thunderstorm", "storm"].includes(type)) {
+      return "thunder-3-day.svg"; // Assuming you have this icon
+    }
+    if (["mist", "smoke", "haze", "fog", "dust", "sand", "ash", "squall", "tornado"].includes(type)) {
+      return "mist-3-day.svg"; // Assuming you have this icon
+    }
+
+    // Default fallback icon
+    return "cloudy-3-day.svg";
   };
+
 
   useEffect(() => {
     const fetchWeatherOnMount = async () => {
