@@ -9,37 +9,23 @@ function MainIndex() {
   /* eslint-disable */
   const [loadingBackdrop, setLoadingBackdrop] = useState(false);
 
+  const apiKey=process.env.REACT_APP_API_KEY_OPEN_WEATHER
+  const apiKey_geoCage=process.env.REACT_APP_API_KEY_GEOCAGE
 
-  const payload = [{
-    location:"Colombo",
-    currentDate: "12-6-2025",
-    humidity: "10",
-    temperature: "10",
-    wind: "10",
-    type: "sunny",
-    pastDays: [
-      { date: "8-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-      { date: "9-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-      { date: "10-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-      { date: "11-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-      { date: "12-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-    ],
-    nextDays: [
-      { date: "13-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-      { date: "14-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-      { date: "15-6-2025", humidity: "10", temperature: "10", wind: "10", type: "windy" },
-    ]
-  }];
-  // let data= payload[0];
 
 
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('Colombo, Sri Lanka');
-  
+  const [selectedLng, setSelectedLocationLong] = useState('');
+  const [selectedLat, setSelectedLocationLat] = useState('');
 
-  // Fetch location suggestions
+  const [mainCardWeatherData, setMainCardWeatherData] = useState(null);
+  const [forecastWeatherData, setForecastWeatherData] = useState([]);
+  const [trendData, setTrendData] = useState([]);
+
+  //geocade api to get values
   useEffect(() => {
     if (inputValue.length < 3) {
       setOptions([]);
@@ -50,14 +36,17 @@ function MainIndex() {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(inputValue)}`
+          `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(inputValue)}&key=${apiKey_geoCage}&limit=5`
         );
         const result = await res.json();
-        const newOptions = result.map((item) => ({
-          label: item.display_name,
-          lat: item.lat,
-          lon: item.lon,
+
+        // Map to your options format
+        const newOptions = result.results.map(item => ({
+          label: item.formatted,
+          lat: item.geometry.lat,
+          lon: item.geometry.lng,
         }));
+
         setOptions(newOptions);
       } catch (err) {
         console.error(err);
@@ -67,6 +56,225 @@ function MainIndex() {
 
     return () => clearTimeout(delayDebounce);
   }, [inputValue]);
+
+ 
+  // function: getting data for current location
+  const fetchCurrentLocationWeather = async (apiKey) => {
+    return new Promise((resolve, reject) => {
+      // Step 1: Get user's current location
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            // Step 2: Fetch weather using lat/lon
+            const response = await fetch(
+              `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+            );
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            resolve(data);
+          } catch (err) {
+            reject(err);
+          }
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  };
+
+  // forecast and past days data for current location
+  async function fetchForecastByGeolocation(apiKey) {
+    if (!navigator.geolocation) {
+      throw new Error("Geolocation is not supported by this browser.");
+    }
+
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const response = await fetch(
+              `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+            );
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            resolve(data);
+          } catch (err) {
+            reject(err);
+          }
+        },
+        (error) => {
+          reject(new Error("Failed to get geolocation: " + error.message));
+        }
+      );
+    });
+  }
+ 
+  //helper function to get icons
+  const getWeatherIconFilename = (weatherType) => {
+    switch (weatherType.toLowerCase()) {
+      case "clouds":
+        return "cloudy-3-day.svg";
+      case "rain":
+        return "rainy-3-day.svg";
+      case "clear":
+        return "sunny-3-day.svg";
+      case "snow":
+        return "snowy-3-day.svg";
+      default:
+        return "cloudy-3-day.svg";
+    }
+  };
+
+  useEffect(() => {
+    const fetchWeatherOnMount = async () => {
+      try {
+        setLoadingBackdrop(true);
+        const data = await fetchCurrentLocationWeather(apiKey);
+
+       
+        
+        setMainCardWeatherData({
+          location: data.name + ", " + data.sys.country,
+          maintemp: Math.round(data.main.temp),
+          weatherStatus: data.weather[0].main,
+          htemp: Math.round(data.main.temp_max),
+          ltemp: Math.round(data.main.temp_min),
+          filename: getWeatherIconFilename(data.weather[0].main), // helper to pick icon
+        });
+        const dataSpan = await fetchForecastByGeolocation(apiKey);
+        console.log("=====> weather", dataSpan);
+        
+        // Extract daily forecasts (pick the forecast for 12:00:00 each day)
+        const dailyForecasts = [];
+        const seenDates = new Set();
+        const dailyAggregates = [];
+
+        dataSpan.list.forEach((item) => {
+          const date = item.dt_txt.split(" ")[0]; // yyyy-mm-dd
+          const time = item.dt_txt.split(" ")[1]; // hh:mm:ss
+
+          if (time === "12:00:00" && !seenDates.has(date)) {
+            seenDates.add(date);
+            dailyForecasts.push(item);
+            dailyAggregates.push({
+              date: date,
+              temperature: item.main.temp,
+              humidity: item.main.humidity,
+              pressure: item.main.pressure,
+              wind_speed: item.wind.speed,
+            });
+          }
+        });
+
+        setForecastWeatherData(dailyForecasts);
+        setTrendData(dailyAggregates);
+        
+       
+      } catch (err) {
+        console.error("Error fetching current location weather:", err);
+      }
+      finally{
+        setLoadingBackdrop(false);
+      }
+    };
+
+    fetchWeatherOnMount();
+  }, []);
+
+
+  async function fetchWeatherByCityName(lat,long, apiKey) {
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${apiKey}&units=metric`
+    );
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    return await response.json();
+   } catch (err) {
+    throw err;
+  }
+ }
+
+  async function fetchForecastByCityName(lat,long, apiKey) {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=${apiKey}&units=metric`
+      );
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
+      return await response.json();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoadingBackdrop(true);
+        const data = await fetchWeatherByCityName(selectedLat,selectedLng, apiKey);
+
+        setMainCardWeatherData({
+          location: data.name + ", " + data.sys.country,
+          maintemp: Math.round(data.main.temp),
+          weatherStatus: data.weather[0].main,
+          htemp: Math.round(data.main.temp_max),
+          ltemp: Math.round(data.main.temp_min),
+          filename: getWeatherIconFilename(data.weather[0].main), // helper to pick icon
+        });
+        const dataSpan = await fetchForecastByCityName(selectedLat,selectedLng, apiKey);
+        
+        // Extract daily forecasts (pick the forecast for 12:00:00 each day)
+        const dailyForecasts = [];
+        const seenDates = new Set();
+        const dailyAggregates = [];
+
+        dataSpan.list.forEach((item) => {
+          const date = item.dt_txt.split(" ")[0]; // yyyy-mm-dd
+          const time = item.dt_txt.split(" ")[1]; // hh:mm:ss
+
+          if (time === "12:00:00" && !seenDates.has(date)) {
+            seenDates.add(date);
+            dailyForecasts.push(item);
+            dailyAggregates.push({
+              date: date,
+              temperature: item.main.temp,
+              humidity: item.main.humidity,
+              pressure: item.main.pressure,
+              wind_speed: item.wind.speed,
+            });
+          }
+        });
+
+        setForecastWeatherData(dailyForecasts);
+        setTrendData(dailyAggregates);
+        
+
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      }
+      finally{
+        setLoadingBackdrop(false);
+      }
+    }
+
+  fetchData();
+  }, [selectedLocation]);
+
+
+
+
  
 
   return (
@@ -89,6 +297,8 @@ function MainIndex() {
     onChange={(e, value) => {
       if (value) {
         setSelectedLocation(value.label);
+        setSelectedLocationLat(value.lat);
+        setSelectedLocationLong(value.lon);
         console.log('Selected Location:', value.label);
       }
     }}
@@ -138,14 +348,16 @@ function MainIndex() {
         }}
         className="main-card-wrapper"
       >
-        <MainCard
-          location="Colombo, Sri Lanka"
-          maintemp={31}
-          weatherStatus="Partly Cloudy"
-          htemp={33}
-          ltemp={27}
-          filename={"snowy-3-day.svg"}
-        />
+        {mainCardWeatherData && (
+          <MainCard
+            location={mainCardWeatherData.location}
+            maintemp={mainCardWeatherData.maintemp}
+            weatherStatus={mainCardWeatherData.weatherStatus}
+            htemp={mainCardWeatherData.htemp}
+            ltemp={mainCardWeatherData.ltemp}
+            filename={mainCardWeatherData.filename}
+          />
+        )}
       </Box>
 
       <Box
@@ -163,30 +375,31 @@ function MainIndex() {
         className="main-card-wrapper"
       >
         <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'15px' }}>
-          Weekly
+          Next five days
         </Typography>
 
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'column',
             overflowX: 'auto',
             whiteSpace: 'nowrap',
             paddingBottom: 1,
+            maxHeight:'200px',
+            overflowY:'auto'
           }}
         >
-          {[...Array(8)].map((_, index) => (
-            <Box key={index} sx={{ flex: '0 0 auto', minWidth: 80, marginRight: 1 }}>
-              <LocationCard
-                maintemp={31 + index}
-                weatherStatus="Partly Cloudy"
-                htemp={33 + index}
-                ltemp={27 + index}
-                filename="snowy-3-day.svg"
-                date={"2025-10-10"}
-              />
-            </Box>
-          ))}
+         {forecastWeatherData && forecastWeatherData.map((forecast, index) => (
+          <LocationCard
+            key={index}
+            maintemp={Math.round(forecast.main.temp)}
+            weatherStatus={forecast.weather[0].main}
+            htemp={Math.round(forecast.main.temp_max)}
+            ltemp={Math.round(forecast.main.temp_min)}
+            filename={getWeatherIconFilename(forecast.weather[0].main)} // assuming you have icons named by icon code
+            date={forecast.dt_txt.split(" ")[0]}
+          />
+        ))}
         </Box>
 
         
@@ -196,9 +409,7 @@ function MainIndex() {
       </Box>
     </Box>
 
-    <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'15px', marginTop: "10px"}}>
-          Weather trends
-      </Typography>
+  
 
      <Box
       sx={{
@@ -213,7 +424,7 @@ function MainIndex() {
     >
 
       
-      <WeatherAreaChart />
+      <WeatherAreaChart data={trendData} />
     </Box>
 
     </>

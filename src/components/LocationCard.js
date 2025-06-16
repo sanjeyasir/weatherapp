@@ -1,50 +1,61 @@
 import { Card, CardContent, Grid, Typography, Box } from '@mui/material';
 
-const LocationCard = ({ maintemp, filename, date}) => {
+const LocationCard = ({ maintemp,weatherStatus, filename, date}) => {
   return (
-    <Card
+   
+
+<Card
+  sx={{
+    minWidth: 250,
+    minHeight: 50,
+    margin: 1,
+    borderRadius: '8px',
+    fontFamily: 'Roboto',
+    boxShadow: 3,
+    display: 'flex',
+    alignItems: 'center',
+    paddingY: 2, // replaces top & bottom padding
+  }}
+>
+  <CardContent sx={{ width: '100%', padding: '10px !important', marginTop:'10px',marginBottom:'10px'}}>
+    <Box
       sx={{
-        minWidth: 100,
-        margin: 1,
-        borderRadius: '20px',
-        textAlign: 'center',
-        fontFamily: 'Roboto',
-        boxShadow: 3,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        margin:'10px'
+        
       }}
     >
-      <CardContent>
-        <Grid container direction="column" alignItems="center" spacing={1}>
+      {/* Weather Icon */}
+      <Box sx={{ width: 50, height: 50, flexShrink: 0 , marginTop:'10px'}}>
+        <img
+          alt="Weather"
+          src={`${process.env.PUBLIC_URL}/images/animated/${filename}`}
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        />
+      </Box>
 
-           {/* Weather Status */}
-          <Grid item>
-            <Typography variant="body" sx={{ color: 'text.secondary' }}>
-              {date}
-            </Typography>
-          </Grid>
-          
-          {/* Location and Icon */}
-          <Grid item>
-            <Box sx={{ width: 50, mx: 'auto', mt: 1 }}>
-              <img
-                alt="Weather"
-                src={`${process.env.PUBLIC_URL}/images/animated/${filename}`}
-                style={{ width: '100%', height: 'auto' }}
-              />
-            </Box>
-          </Grid>
+      {/* Weather Info */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 , marginTop:'10px'}}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {date}
+        </Typography>
+        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+          {weatherStatus}
+        </Typography>
+      </Box>
 
-          {/* Main Temperature */}
-          <Grid item>
-            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-              {maintemp}°
-            </Typography>
-          </Grid>
+      {/* Temperature */}
+      <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'right', minWidth: 40 }}>
+        {maintemp}°
+      </Typography>
+    </Box>
+  </CardContent>
+</Card>
 
-         
 
-        </Grid>
-      </CardContent>
-    </Card>
+
   );
 };
 

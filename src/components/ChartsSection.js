@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   AreaChart,
   Area,
@@ -6,38 +7,112 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  Tabs,
+  Tab,
+  Box,
+  Typography,
+} from "@mui/material";
+import AirIcon from "@mui/icons-material/Air";
+import WaterDropIcon from "@mui/icons-material/WaterDrop";
+import CompressIcon from "@mui/icons-material/Compress";
 
-// Sample data (you can pass this as a prop instead)
-const sampleData = [
-  { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
-  { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
-  { name: 'Page F', uv: 2390, pv: 3800, amt: 2500 },
-  { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
-];
+const WeatherAreaChart = ({ data }) => {
+  const [selectedTab, setSelectedTab] = useState(0);
 
-const WeatherAreaChart = ({ data = sampleData }) => {
+  const metricMap = [
+    {
+      label: "Wind Speed",
+      key: "wind_speed",
+      color: "#8884d8",
+      icon: <AirIcon />,
+      unit: "m/s",
+    },
+    {
+      label: "Humidity",
+      key: "humidity",
+      color: "#82ca9d",
+      icon: <WaterDropIcon />,
+      unit: "%",
+    },
+    {
+      label: "Pressure",
+      key: "pressure",
+      color: "#ffc658",
+      icon: <CompressIcon />,
+      unit: "hPa",
+    },
+  ];
+
+  const activeMetric = metricMap[selectedTab];
+
   return (
-    <div style={{ width: '100%', height: 300, marginTop:'10px' }}>
-      <ResponsiveContainer>
-        <AreaChart
-          data={data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+    <Card
+      sx={{
+        mt: 3,
+        boxShadow: 4,
+        borderRadius: "16px",
+        fontFamily: "Roboto",
+        width:'100%',
+        margin:'20px'
+      }}
+    >
+      <CardContent>
+         <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'10px' }}>
+          Trends
+        </Typography>
+       
+
+        <Tabs
+          value={selectedTab}
+          onChange={(e, newValue) => setSelectedTab(newValue)}
+          variant="fullWidth"
+          indicatorColor="primary"
+          textColor="primary"
+          sx={{ mb: 2 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-          <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-          <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
+          {metricMap.map((metric) => (
+            <Tab
+              key={metric.key}
+              icon={metric.icon}
+              label={metric.label}
+              iconPosition="start"
+              sx={{ fontSize: "0.875rem", fontWeight: "medium" }}
+            />
+          ))}
+        </Tabs>
+
+        <Box sx={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer>
+            <AreaChart
+              data={data}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip
+                formatter={(value) => `${value} ${activeMetric.unit}`}
+                labelFormatter={(label) => `Date: ${label}`}
+              />
+              <Area
+                type="monotone"
+                dataKey={activeMetric.key}
+                stroke={activeMetric.color}
+                fill={activeMetric.color}
+                animationDuration={500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
 
 export default WeatherAreaChart;
+
+
