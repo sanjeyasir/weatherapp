@@ -4,6 +4,7 @@ import { Box, Typography, TextField, Autocomplete, CircularProgress } from '@mui
 import { useState, useEffect } from 'react';
 import Backdrop from "@mui/material/Backdrop";
 import WeatherAreaChart from '../../components/ChartsSection';
+import { toast } from 'react-toastify';
 
 function MainIndex() {
   /* eslint-disable */
@@ -192,13 +193,24 @@ function MainIndex() {
 
         setForecastWeatherData(dailyForecasts);
         setTrendData(dailyAggregates);
+        toast.success("Successful retrieved weather information", {
+          position: "top-right",
+          theme: "colored",
+          style: { fontSize: '12px' }
+        });
         
        
       } catch (err) {
         console.error("Error fetching current location weather:", err);
+        toast.error("Something went wrong getting weather information", {
+          position: "top-right",
+          theme: "colored",
+          style: { fontSize: '12px' }
+        });
       }
       finally{
         setLoadingBackdrop(false);
+        
       }
     };
 
@@ -237,6 +249,7 @@ function MainIndex() {
     async function fetchData() {
       try {
         setLoadingBackdrop(true);
+        if(!selectedLat||!selectedLng) throw new Error('No data!')
         const data = await fetchWeatherByCityName(selectedLat,selectedLng, apiKey);
 
         setMainCardWeatherData({
@@ -273,13 +286,28 @@ function MainIndex() {
 
         setForecastWeatherData(dailyForecasts);
         setTrendData(dailyAggregates);
+         toast.success("Successful retrieved weather information", {
+          position: "top-right",
+          theme: "colored",
+          style: { fontSize: '12px' }
+        });
         
 
       } catch (error) {
         console.error("Error fetching data:", error.message);
+        if(selectedLat || selectedLng){
+          toast.error("Something went wrong getting weather information", {
+          position: "top-right",
+          theme: "colored",
+          style: { fontSize: '12px' }
+        });
+
+        }
+        
       }
       finally{
         setLoadingBackdrop(false);
+       
       }
     }
 
