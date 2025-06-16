@@ -61,66 +61,47 @@ function MainIndex() {
  
   // function: getting data for current location
   const fetchCurrentLocationWeather = async (apiKey) => {
-    return new Promise((resolve, reject) => {
-      // Step 1: Get user's current location
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
+    const latitude = 6.9271;
+    const longitude = 79.8612;
 
-          try {
-            // Step 2: Fetch weather using lat/lon
-            const response = await fetch(
-              `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
-            );
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            resolve(data);
-          } catch (err) {
-            reject(err);
-          }
-        },
-        (error) => {
-          reject(error);
-        }
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
       );
-    });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      throw new Error("Failed to fetch current weather: " + err.message);
+    }
   };
 
+
   // forecast and past days data for current location
-  async function fetchForecastByGeolocation(apiKey) {
-    if (!navigator.geolocation) {
-      throw new Error("Geolocation is not supported by this browser.");
+  const fetchForecastByGeolocation = async (apiKey) => {
+  const latitude = 6.9271;
+  const longitude = 79.8612;
+
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const response = await fetch(
-              `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
-            );
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            resolve(data);
-          } catch (err) {
-            reject(err);
-          }
-        },
-        (error) => {
-          reject(new Error("Failed to get geolocation: " + error.message));
-        }
-      );
-    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    throw new Error("Failed to fetch forecast data: " + err.message);
   }
+};
+
  
  // Enhanced helper function to get appropriate weather icon filename
   const getWeatherIconFilename = (weatherType) => {
