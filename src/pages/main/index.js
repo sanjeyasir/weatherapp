@@ -310,7 +310,7 @@ function MainIndex() {
         fullWidth
         sx={{
           '& .MuiOutlinedInput-root': {
-            borderRadius: '20px', // 🎯 round the corners here
+            borderRadius: '20px',
           },
         }}
         InputProps={{
