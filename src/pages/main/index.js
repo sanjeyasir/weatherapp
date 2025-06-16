@@ -376,7 +376,7 @@ function MainIndex() {
         }}
         className="main-card-wrapper"
       >
-        {forecastWeatherData && <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'15px' }}>
+        {forecastWeatherData.length!=0 && <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'15px' }}>
           Next five days
         </Typography>}
 
