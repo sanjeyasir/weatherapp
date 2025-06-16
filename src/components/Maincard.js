@@ -20,7 +20,7 @@ const MainCard = ({ location, maintemp, weatherStatus, htemp, ltemp, filename })
         boxShadow: 4,
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
         border: '1px solid #ffffff',
-        color: '#004d40',
+        color: 'black',
         backdropFilter: 'blur(6px)',
       }}
     >
