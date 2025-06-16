@@ -376,9 +376,9 @@ function MainIndex() {
         }}
         className="main-card-wrapper"
       >
-        <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'15px' }}>
+        {forecastWeatherData && <Typography variant="body" sx={{ fontWeight: 500, fontSize: '20px', marginBottom: 1, marginLeft:'15px' }}>
           Next five days
-        </Typography>
+        </Typography>}
 
         <Box
           sx={{
