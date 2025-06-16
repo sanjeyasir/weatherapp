@@ -6,6 +6,7 @@ import Backdrop from "@mui/material/Backdrop";
 import WeatherAreaChart from '../../components/ChartsSection';
 
 function MainIndex() {
+  /* eslint-disable */
   const [loadingBackdrop, setLoadingBackdrop] = useState(false);
 
 
