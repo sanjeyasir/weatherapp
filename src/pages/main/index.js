@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Backdrop from "@mui/material/Backdrop";
 import WeatherAreaChart from '../../components/ChartsSection';
 import { toast } from 'react-toastify';
+import NavCard from '../../components/NavComponent';
 
 function MainIndex() {
   /* eslint-disable */
@@ -310,6 +311,20 @@ function MainIndex() {
                 <CircularProgress color="inherit" />
               </Backdrop>
       )}
+
+       <Box 
+       sx={{
+        display: 'flex',
+        flexWrap: { xs: 'wrap', md: 'nowrap' }, // Wrap on small, row on medium+
+        width: '100%',
+        margin: 0,
+        padding: 2.5,
+        boxSizing: 'border-box',
+      }}
+      >
+      <NavCard/>
+    </Box>
+    
     
    <Box sx={{ padding: 2 }}>
   <Autocomplete
