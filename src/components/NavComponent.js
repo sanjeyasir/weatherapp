@@ -14,7 +14,8 @@ const buttons = [
   { label: 'Weather', icon: <WbSunnyIcon fontSize="small" />, path: '/' },
   { label: 'Daily Mirror 🇱🇰', icon: <ArticleIcon fontSize="small" />, path: '/news/dailymirrorlk' },
   { label: 'Matching Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/game' },
-  { label: 'Snake Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/snakegame' }
+  { label: 'Snake Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/snakegame' },
+  { label: 'Solar System', icon:<SportsEsportsIcon fontSize="small" />, path: '/solarsystem' }
 ];
 
 
