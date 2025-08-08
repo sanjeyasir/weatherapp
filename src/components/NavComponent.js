@@ -2,7 +2,8 @@ import { Card, CardContent, Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import ArticleIcon from '@mui/icons-material/Article';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'; 
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+
 
 const NavCard = () => {
   const navigate = useNavigate();
@@ -11,8 +12,11 @@ const NavCard = () => {
 
 const buttons = [
   { label: 'Weather', icon: <WbSunnyIcon fontSize="small" />, path: '/' },
-  { label: 'Daily Mirror 🇱🇰', icon: <ArticleIcon fontSize="small" />, path: '/news/dailymirrorlk' }
+  { label: 'Daily Mirror 🇱🇰', icon: <ArticleIcon fontSize="small" />, path: '/news/dailymirrorlk' },
+  { label: 'Matching Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/game' },
+  { label: 'Snake Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/snakegame' }
 ];
+
 
 
   return (

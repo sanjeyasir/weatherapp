@@ -5,6 +5,8 @@ import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DailyMirrorNews from './pages/dailymirror';
+import Game from './pages/game';
+import SnakeGame from './pages/snakegame';
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/news/dailymirrorlk" element={<DailyMirrorNews />} />
+        <Route path="/game" element={<Game />} />
+        <Route path="/snakegame" element={<SnakeGame />} />
       </Routes>
       <ToastContainer /> 
     </>
