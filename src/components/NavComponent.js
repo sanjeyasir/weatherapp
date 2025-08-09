@@ -15,7 +15,8 @@ const buttons = [
   { label: 'Daily Mirror 🇱🇰', icon: <ArticleIcon fontSize="small" />, path: '/news/dailymirrorlk' },
   { label: 'Matching Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/game' },
   { label: 'Snake Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/snakegame' },
-  { label: 'Solar System', icon:<SportsEsportsIcon fontSize="small" />, path: '/solarsystem' }
+  { label: 'Solar System', icon:<SportsEsportsIcon fontSize="small" />, path: '/solarsystem' },
+  { label: 'Crystal Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/crystalgame' }
 ];
 
 
