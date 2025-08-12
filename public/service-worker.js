@@ -1,6 +1,7 @@
 const CACHE_NAME = 'snake-game-cache-v1';
 const FILES_TO_CACHE = [
   '/',                // your app root or the path for the Snake game page (adjust if you use routes)
+  '/snakegame',
   '/static/js/main.js', // adjust to your actual JS bundle(s)
   '/static/css/main.css', // adjust CSS path if any
   // Add other assets your game page needs, e.g., images/fonts
