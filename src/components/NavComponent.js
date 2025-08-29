@@ -16,7 +16,8 @@ const buttons = [
   { label: 'Matching Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/game' },
   { label: 'Snake Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/snakegame' },
   { label: 'Solar System', icon:<SportsEsportsIcon fontSize="small" />, path: '/solarsystem' },
-  { label: 'Crystal Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/crystalgame' }
+  { label: 'Crystal Game', icon:<SportsEsportsIcon fontSize="small" />, path: '/crystalgame' },
+  { label: 'Password Tester', icon: <ArticleIcon fontSize="small" />, path: '/passwordtester' },
 ];
 
 
